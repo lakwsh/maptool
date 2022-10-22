@@ -1,14 +1,12 @@
 #include "eiface.h"
 
-#include "signature.h"
-
 class maptool:public IServerPluginCallbacks{
 public:
 	virtual bool Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory);
 	virtual void Unload(){ }
 	virtual void Pause(){ }
 	virtual void UnPause(){ }
-	virtual const char *GetPluginDescription(){ return "maptool v1.0.0, https://github.com/lakwsh/maptool"; }
+	virtual const char *GetPluginDescription(){ return "maptool v1.0.1, https://github.com/lakwsh/maptool"; }
 	virtual void LevelInit(char const *pMapName){ }
 	virtual void ServerActivate(edict_t *pEdictList, int edictCount, int clientMax){ }
 	virtual void GameFrame(bool simulating){ }

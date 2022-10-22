@@ -6,7 +6,7 @@
 #####################################
 
 PROJECT = maptool
-OBJECTS = maptool.cpp signature.cpp
+OBJECTS = maptool.cpp
 
 ##############################################
 ### CONFIGURE ANY OTHER FLAGS/OPTIONS HERE ###
