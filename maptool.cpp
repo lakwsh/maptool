@@ -1,8 +1,11 @@
 #include "maptool.h"
+#include <fstream>
 #ifdef WIN32
 const char *mat_dll = "left4dead2\\bin\\matchmaking_ds.dll";
+const char *path = "left4dead2\\addons\\maplist.txt";
 #else
 const char *mat_dll = "left4dead2/bin/matchmaking_ds_srv.so";
+const char *path = "left4dead2/addons/maplist.txt";
 #endif
 
 maptool g_maptool;
@@ -18,29 +21,33 @@ bool maptool::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameSer
 		KeyValues *mis = ((KeyValues *(*)(void *))match[0][0])(match);
 		if(mis){
 			Msg("[maptool] Dumping all missions...\n");
+			std::ofstream fs;
+			fs.open(path, std::ios::out|std::ios::trunc);
 			KeyValues *map = mis->GetFirstSubKey();
 			while(map){
 				KeyValues *modes = map->FindKey("modes");
 				if(modes && !map->GetInt("BuiltIn")){
-					Msg("<%s> %s\n", map->GetName(), map->GetString("DisplayTitle"));
+					fs<<"<"<<map->GetName()<<"> "<<map->GetString("DisplayTitle")<<std::endl;
 					uint64 id = map->GetUint64("workshopid");
-					if(id) Msg("url: https://steamcommunity.com/workshop/filedetails/?id=%llu\n", id);
-					else Msg("url: %s\n", map->GetString("Website"));
+					if(id) fs<<"url: https://steamcommunity.com/workshop/filedetails/?id="<<id<<std::endl;
+					else fs<<"url: "<<map->GetString("Website")<<std::endl;
 					for(unsigned i = 0; i<sizeof(mlist)/sizeof(mlist[0]); i++){
 						KeyValues *mode = modes->FindKey(mlist[i]);
 						if(!mode) continue;
-						Msg("[%s]\n", mode->GetName());
+						fs<<"["<<mode->GetName()<<"]"<<std::endl;
 						KeyValues *chap = mode->GetFirstSubKey();
 						for(int j = 1; chap && !chap->IsEmpty("Map"); j++){
-							Msg("%2d: %s\n", j, chap->GetString("Map"));
-							Msg("name: %s\n", chap->GetString("DisplayName"));
+							fs.width(2);
+							fs<<j<<": "<<chap->GetString("Map")<<std::endl;
+							fs<<"name: "<<chap->GetString("DisplayName")<<std::endl;
 							chap = chap->GetNextKey();
 						}
 					}
-					Msg("\n");
+					fs<<std::endl;
 				}
 				map = map->GetNextKey();
 			}
+			fs.close();
 			Msg("[maptool] done.\n");
 		}
 	}
