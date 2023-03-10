@@ -123,9 +123,9 @@ all:
 	mkdir -p $(BIN_DIR)
 	ln -sf $(HL2LIB)/$(LIB_PREFIX)vstdlib$(LIB_SUFFIX)
 	ln -sf $(HL2LIB)/$(LIB_PREFIX)tier0$(LIB_SUFFIX)
-	$(MAKE) -f Makefile l4dtoolz
+	$(MAKE) -f Makefile maptool
 
-l4dtoolz: $(OBJ_BIN)
+maptool: $(OBJ_BIN)
 	$(CPP) $(INCLUDE) -m32 $(OBJ_BIN) $(LINK) -ldl -lm -s -o $(BIN_DIR)/$(BINARY)
 
 default: all
