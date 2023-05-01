@@ -6,7 +6,7 @@ public:
 	virtual void Unload(){ }
 	virtual void Pause(){ }
 	virtual void UnPause(){ }
-	virtual const char *GetPluginDescription(){ return "MapTool v1.0.2, https://github.com/lakwsh/MapTool"; }
+	virtual const char *GetPluginDescription(){ return "MapTool v1.0.3, https://github.com/lakwsh/MapTool"; }
 	virtual void LevelInit(char const *pMapName){ }
 	virtual void ServerActivate(edict_t *pEdictList, int edictCount, int clientMax){ }
 	virtual void GameFrame(bool simulating){ }

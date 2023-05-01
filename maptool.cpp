@@ -1,10 +1,12 @@
 #include "maptool.h"
+#include "matchmaking/l4d2/imatchext_l4d.h"
+#include "filesystem.h"
 #include <fstream>
 #ifdef WIN32
-const char *mat_dll = "left4dead2\\bin\\matchmaking_ds.dll";
+const char *mat_dll = "matchmaking_ds.dll";
 const char *path = "left4dead2\\addons\\maplist.txt";
 #else
-const char *mat_dll = "left4dead2/bin/matchmaking_ds_srv.so";
+const char *mat_dll = "matchmaking_ds_srv.so";
 const char *path = "left4dead2/addons/maplist.txt";
 #endif
 
@@ -14,11 +16,12 @@ EXPOSE_SINGLE_INTERFACE_GLOBALVAR(maptool, IServerPluginCallbacks, INTERFACEVERS
 const char *mlist[] = {"coop", "realism", "versus", "survival", "scavenge"};
 
 bool maptool::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory){
-	auto fn = Sys_GetFactory(mat_dll);
+	auto fs = (IFileSystem *)interfaceFactory(FILESYSTEM_INTERFACE_VERSION, NULL);
+	auto fn = Sys_GetFactory(fs->LoadModule(mat_dll, "GAMEBIN", true));
 	if(!fn) return false;
-	uint **match = (uint **)fn("IMATCHEXT_L4D_INTERFACE_001", NULL);
+	auto match = (IMatchExtL4D *)fn(IMATCHEXT_L4D_INTERFACE, NULL);
 	if(match){
-		KeyValues *mis = ((KeyValues *(*)(void *))match[0][0])(match);
+		KeyValues *mis = match->GetAllMissions();
 		if(mis){
 			Msg("[maptool] Dumping all missions...\n");
 			std::ofstream fs;
