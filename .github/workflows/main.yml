@@ -1,0 +1,42 @@
+name: maptool
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths-ignore:
+      - '**.md'
+      - '**.yml'
+  schedule:
+    - cron: '30 03 01 */3 *'
+  workflow_dispatch:
+
+jobs:
+  build_linux:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Prepare env
+      run: |
+        echo "deb http://dk.archive.ubuntu.com/ubuntu/ xenial main" | sudo tee -a /etc/apt/sources.list
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32
+        sudo dpkg --add-architecture i386
+        sudo apt-get update
+        sudo apt install gcc-5-multilib g++-5-multilib
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 100
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 100
+    - uses: actions/checkout@v4
+      with:
+        repository: lakwsh/hl2sdk-l4d2
+        path: hl2sdk-l4d2
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'true'
+        path: maptool
+    - name: Build maptool
+      working-directory: maptool
+      run: make all
+    - uses: actions/upload-artifact@v4
+      with:
+        name: maptool-${{github.run_id}}
+        path: maptool/Release/maptool.so
+        compression-level: 9
