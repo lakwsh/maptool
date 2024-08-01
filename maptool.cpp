@@ -14,7 +14,7 @@ static const char *mlist[] = {"coop", "realism", "versus", "survival", "scavenge
 bool maptool::Load(CreateInterfaceFn interfaceFactory, CreateInterfaceFn gameServerFactory) {
     mem_info info = {"matchmaking_ds_srv.so"};
     if (!find_base(&info)) return false;
-    auto match = (IMatchExtL4D *)get_sym(base, "_ZL13g_MatchExtL4D");
+    auto match = (IMatchExtL4D *)get_sym(info.addr, "_ZL13g_MatchExtL4D");
     if (!match) return false;
 
     KeyValues *mis = match->GetAllMissions();
